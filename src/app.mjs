@@ -41,15 +41,19 @@ const registrationMessages = {
 };
 
 app.use((req, res, next) => {
-    if (authRequiredPaths.includes(req.path)) {
-        if (!req.session.user) {
-            res.redirect('/login');
-        } else {
-            next();
-        }
-    } else {
+    if (!authRequiredPaths.includes(req.path)) {
         next();
+
+        return;
     }
+
+    if (req.session.user) {
+        next();
+
+        return;
+    }
+
+    res.redirect('/login');
 });
 
 app.use((request, response, next) => {
@@ -78,6 +82,7 @@ app.post('/article/add', async (request, response) => {
         description: sanitize(request.body.description),
         user: request.session.user._id
     });
+
     try {
         await article.save();
         response.redirect('/');
@@ -114,7 +119,9 @@ app.post('/register', async (request, response) => {
         response.redirect('/');
     } catch (err) {
         console.log(err);
-        response.render('register', { message: registrationMessages[err.message] ?? 'Registration error' });
+        response.render('register', {
+            message: registrationMessages[err.message] ?? 'Registration error'
+        });
     }
 });
 

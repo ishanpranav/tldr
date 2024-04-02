@@ -10,12 +10,15 @@ const User = mongoose.model('User');
 const startAuthenticatedSession = (req, user) => {
     return new Promise((fulfill, reject) => {
         req.session.regenerate((err) => {
-            if (!err) {
-                req.session.user = user;
-                fulfill(user);
-            } else {
-                reject(error);
+            if (err) {
+                reject(err);
+                
+                return;
             }
+
+            req.session.user = user;
+
+            fulfill(user);
         });
     });
 };
@@ -28,19 +31,34 @@ const endAuthenticatedSession = req => {
 
 const register = (username, email, password) => {
     return new Promise(async (fulfill, reject) => {
+        if (username.length <= 8 || password.length <= 8) {
+            reject({
+                message: 'USERNAME PASSWORD TOO SHORT'
+            });
+        
+            return;
+        }
 
-        // TODO: implement registration
-        // * check if username and password are both greater than 8
-        //   * if not, reject with { message: 'USERNAME ALREADY EXISTS' }
-        // * check if user with same username already exists
-        //   * if not, reject with { message: 'USERNAME PASSWORD TOO SHORT' }
-        // * salt and hash using bcrypt's sync functions
-        //   * https://www.npmjs.com/package/bcryptjs#usage---sync
-        // * if registration is successfull, fufill with the newly created user
+        if (await User.findOne({ username: username })) {
+            reject({
+                message: 'USERNAME ALREADY EXISTS'
+            });
+        
+            return;
+        }
 
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
+        
+        let user = new User({
+            username: username,
+            password: hash,
+            email: email
+        });
 
-        // end TODO
+        user = await user.save();
 
+        fulfill(user);
     });
 }
 
