@@ -7,7 +7,6 @@
     <title></title>
     <link rel="stylesheet" href="/css/site.css" type="text/css" media="screen" title="no title" charset="utf-8">
 </head>
-
 <body>
     <div id="outer">
         <header>
@@ -19,7 +18,6 @@
                 </span>
                 <span class="login-status">
                     {{#if user}}
-                    <!--<span class="success">Logged in as: {{user.username}}</span>-->
                     Logged in as: {{user.username}}
                     {{else}}
                     <a href="/register">Register</a> or <a href="/login">
@@ -29,22 +27,12 @@
                 </span>
             </nav>
         </header>
-
         <h1>Too Long; Didn't Read</h1>
-
         <div class="content">
             A link aggregation site. Kind of like a terrible version of another site whose name rhymes with "Fed it.".
 
             {{{ body }}}
         </div>
-
-        <!--
-{{#if home}}
-{{else}}
-<div class="note">Want go <a href="/">back home</a>?</div>
-{{/if}}
-</div>
--->
-
+    </div>
 </body>
 </html>
