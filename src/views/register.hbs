@@ -1,3 +1,5 @@
+{{!-- Licensed under the MIT license. --}}
+
 <h2>Register</h2>
 {{#if message}}
 <div class="error">{{ message }}</div>
@@ -5,15 +7,15 @@
 <form method="POST" action="register">
 	<div>
 		<label for="username">Username:</label>
-		<input type="text" name="username" value="">
+		<input type="text" name="username" value="" />
 	</div>
 	<div>
 		<label for="email">Email:</label> 
-		<input type="email" name="email" value="">
+		<input type="email" name="email" value="" />
 	</div>
 	<div>
 		<label for="password">Password:</label>
-		<input type="password" name="password" value="">
+		<input type="password" name="password" value="" />
 	</div>
 	<div><input type="submit" value="Register"></div>
 </form>

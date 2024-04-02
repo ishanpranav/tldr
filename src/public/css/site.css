@@ -1,8 +1,10 @@
+/* Licensed under the MIT license. */
+
 body {
 	height: 100vh;
 	font-family: Garamond, sans-serif;
 	font-size: 1.25em;
-	background-color: #222;
+	background-color: #222222;
 	text-align: center;
 	margin: auto;
 	margin-top: 0px;
@@ -40,7 +42,7 @@ h1, h2 {
 #outer {
 	width: 500px;
 	height: 100vh;
-	background-color: #fff;
+	background-color: #ffffff;
 	margin: auto;
 	text-align: left;
 }

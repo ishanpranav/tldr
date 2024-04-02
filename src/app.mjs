@@ -1,3 +1,7 @@
+// app.mjs
+// Copyright (c) 2024 Ishan Pranav
+// Licensed under the MIT license.
+
 import './config.mjs';
 import './db.mjs';
 import mongoose from 'mongoose';
@@ -27,53 +31,59 @@ const Article = mongoose.model('Article');
 
 const authRequiredPaths = ['/article/add'];
 
-const loginMessages = {"PASSWORDS DO NOT MATCH": 'Incorrect password', "USER NOT FOUND": 'User doesn\'t exist'};
-const registrationMessages = {"USERNAME ALREADY EXISTS": "Username already exists", "USERNAME PASSWORD TOO SHORT": "Username or password is too short"};
+const loginMessages = {
+    'PASSWORDS DO NOT MATCH': "Incorrect password", 
+    'USER NOT FOUND': "User doesn't exist"
+};
+const registrationMessages = {
+    'USERNAME ALREADY EXISTS': "Username already exists",
+    'USERNAME PASSWORD TOO SHORT': "Username or password is too short"
+};
 
 app.use((req, res, next) => {
-  if(authRequiredPaths.includes(req.path)) {
-    if(!req.session.user) {
-      res.redirect('/login'); 
+    if (authRequiredPaths.includes(req.path)) {
+        if (!req.session.user) {
+            res.redirect('/login');
+        } else {
+            next();
+        }
     } else {
-      next(); 
+        next();
     }
-  } else {
-    next(); 
-  }
 });
 
-app.use((req, res, next) => {
-  res.locals.user = req.session.user;
-  next();
+app.use((request, response, next) => {
+    response.locals.user = request.session.user;
+    next();
 });
 
-app.use((req, res, next) => {
-  console.log(req.path.toUpperCase(), req.body);
-  next();
+app.use((request, response, next) => {
+    console.log(request.path.toUpperCase(), request.body);
+    next();
 });
 
-app.get('/', async (req, res) => {
-  const articles = await Article.find({}).sort('-createdAt').exec();
-  res.render('index', {user: req.session.user, home: true, articles: articles});
+app.get('/', async (request, response) => {
+    const articles = await Article.find({}).sort('-createdAt').exec();
+    response.render('index', { user: request.session.user, home: true, articles: articles });
 });
 
-app.get('/article/add', (req, res) => {
-  res.render('article-add');
+app.get('/article/add', (request, response) => {
+    response.render('article-add');
 });
 
-app.post('/article/add', async (req, res) => {
-  const article = new Article({
-    title: sanitize(req.body.title), 
-    url: sanitize(req.body.url), 
-    description: sanitize(req.body.description),
-    user: req.session.user._id
-  });
-  try {
-    await article.save();
-    res.redirect('/'); 
-  } catch(err) {
-    res.render('article-add', {message: err.message});
-  }
+app.post('/article/add', async (request, response) => {
+    const article = new Article({
+        title: sanitize(request.body.title),
+        url: sanitize(request.body.url),
+        description: sanitize(request.body.description),
+        user: request.session.user._id
+    });
+    try {
+        await article.save();
+        response.redirect('/');
+    } catch (err) {
+        response.render('article-add', { message: err.message });
+    }
 });
 
 // TODO: respond to GET requests for a specific articl
@@ -89,41 +99,43 @@ app.post('/article/add', async (req, res) => {
 
 // end TODO
 
-app.get('/register', (req, res) => {
-  res.render('register');
+app.get('/register', (request, response) => {
+    response.render('register');
 });
 
-app.post('/register', async (req, res) => {
-  try {
-    const newUser = await auth.register(
-      sanitize(req.body.username), 
-      sanitize(req.body.email), 
-      req.body.password
-    );
-    await auth.startAuthenticatedSession(req, newUser);
-    res.redirect('/'); 
-  } catch(err) {
-    console.log(err);
-    res.render('register', {message: registrationMessages[err.message] ?? 'Registration error'}); 
-  }
-});
-        
-app.get('/login', (req, res) => {
-    res.render('login');
+app.post('/register', async (request, response) => {
+    try {
+        const newUser = await auth.register(
+            sanitize(request.body.username),
+            sanitize(request.body.email),
+            request.body.password
+        );
+        await auth.startAuthenticatedSession(request, newUser);
+        response.redirect('/');
+    } catch (err) {
+        console.log(err);
+        response.render('register', { message: registrationMessages[err.message] ?? 'Registration error' });
+    }
 });
 
-app.post('/login', async (req, res) => {
-  try {
-    const user = await auth.login(
-      sanitize(req.body.username), 
-      req.body.password
-    );
-    await auth.startAuthenticatedSession(req, user);
-    res.redirect('/'); 
-  } catch(err) {
-    console.log(err)
-    res.render('login', {message: loginMessages[err.message] ?? 'Login unsuccessful'}); 
-  }
+app.get('/login', (request, response) => {
+    response.render('login');
+});
+
+app.post('/login', async (request, response) => {
+    try {
+        const user = await auth.login(
+            sanitize(request.body.username),
+            request.body.password
+        );
+        await auth.startAuthenticatedSession(request, user);
+        response.redirect('/');
+    } catch (err) {
+        console.log(err)
+        response.render('login', {
+            message: loginMessages[err.message] ?? 'Login unsuccessful'
+        });
+    }
 });
 
 app.listen(process.env.PORT ?? 3000);

@@ -1,3 +1,5 @@
+/** Licensed under the MIT license. */
+
 module.exports = {
     "plugins": [
         "mocha", 
