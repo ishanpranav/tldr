@@ -8,31 +8,29 @@ import mongoose from 'mongoose';
 const User = mongoose.model('User');
 
 /**
+ * Asynchronously initializes an authenticated session.
  * 
- * @param {*} request 
- * @param {*} user 
- * @returns 
+ * @param {*} request the Express request.
+ * @param {*} user    a reference to a database user.
+ * @returns A promise that represents the asynchronous initialization operation.
  */
-export function startAuthenticatedSession(request, user) {
-    return new Promise((fulfill, reject) => {
-        request.session.regenerate((err) => {
-            if (err) {
-                reject(err);
-                
-                return;
-            }
+export async function startAuthenticatedSession(request, user) {
+    request.session.regenerate((err) => {
+        if (err) {
+            throw err;
+        }
 
-            request.session.user = user;
+        request.session.user = user;
 
-            fulfill(user);
-        });
+        return user;
     });
 }
 
 /**
+ * Asynchronously initializes an authenticated session.
  * 
- * @param {*} request 
- * @returns 
+ * @param {*} request the Express request.
+ * @returns A promise that represents the asynchronous finalization operation.
  */
 export function endAuthenticatedSession(request) {
     return new Promise((fulfill, reject) => {
@@ -41,70 +39,58 @@ export function endAuthenticatedSession(request) {
 }
 
 /**
+ * Asynchronously registers a user account.
  * 
- * @param {*} username 
- * @param {*} email 
- * @param {*} password 
- * @returns 
+ * @param {*} username the user name.
+ * @param {*} email    the email address.
+ * @param {*} password the password.
+ * @returns A promise that represents the asynchronous registration operation.
  */
-export function register(username, email, password) {
-    return new Promise(async (fulfill, reject) => {
-        if (username.length <= 8 || password.length <= 8) {
-            reject({
-                message: 'USERNAME PASSWORD TOO SHORT'
-            });
-        
-            return;
-        }
+export async function register(username, email, password) {
+    if (username.length <= 8 || password.length <= 8) {
+        throw {
+            message: 'USERNAME PASSWORD TOO SHORT'
+        };
+    }
 
-        if (await User.findOne({ username: username })) {
-            reject({
-                message: 'USERNAME ALREADY EXISTS'
-            });
-        
-            return;
-        }
-        
-        let user = await new User({
-            username: username,
-            password:  await bcrypt.hash(password, await bcrypt.genSalt()),
-            email: email
-        });
+    if (await User.findOne({ username: username })) {
+        throw {
+            message: 'USERNAME ALREADY EXISTS'
+        };
+    }
 
-        user = await user.save();
-
-        fulfill(user);
+    let user = await new User({
+        username: username,
+        password: await bcrypt.hash(password, await bcrypt.genSalt()),
+        email: email
     });
+
+    return await user.save();
 }
 
 /**
+ * Asynchronously authenticates a user account.
  * 
- * @param {*} username 
- * @param {*} password 
- * @returns 
+ * @param {*} username the user name.
+ * @param {*} password the password.
+ * @returns A promise that represents the asynchrnous authentication operation.
  */
-export function login(username, password) {
-    return new Promise(async (fulfill, reject) => {
-        const user = await User.findOne({
-            username: username
-        });
-
-        if (!user) {
-            reject({
-                message: 'USER NOT FOUND'
-            });
-
-            return;
-        }
-
-        if (!await bcrypt.compare(password, user.password)) {
-            reject({
-                message: 'PASSWORDS DO NOT MATCH'
-            });
-
-            return;
-        }
-
-        fulfill(user);
+export async function login(username, password) {
+    const user = await User.findOne({
+        username: username
     });
+
+    if (!user) {
+        throw {
+            message: 'USER NOT FOUND'
+        };
+    }
+
+    if (!await bcrypt.compare(password, user.password)) {
+        throw {
+            message: 'PASSWORDS DO NOT MATCH'
+        };
+    }
+
+    return user;
 }

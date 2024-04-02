@@ -103,19 +103,6 @@ app.get('/article/:name', async (request, response) => {
     });
 });
 
-// TODO: respond to GET requests for a specific articl
-// * path is /article/name-of-article-as-slug
-//   * where name-of-article-as-slug will vary
-// * use path parameters to do this
-// * find the article using the `findOne`
-// * use populate to get the related user info 
-//   * (note that referenced models are used)
-// * when found, render the article-detail handlebars file
-// * set the template variable to the found user when rednering
-
-
-// end TODO
-
 app.get('/register', (request, response) => {
     response.render('register');
 });
