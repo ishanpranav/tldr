@@ -27,7 +27,7 @@ export function startAuthenticatedSession(request, user) {
             fulfill(user);
         });
     });
-};
+}
 
 /**
  * 
@@ -38,7 +38,7 @@ export function endAuthenticatedSession(request) {
     return new Promise((fulfill, reject) => {
         request.session.destroy(err => err ? reject(err) : fulfill(null));
     });
-};
+}
 
 /**
  * 
@@ -64,13 +64,10 @@ export function register(username, email, password) {
         
             return;
         }
-
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(password, salt);
         
-        let user = new User({
+        let user = await new User({
             username: username,
-            password: hash,
+            password:  await bcrypt.hash(password, await bcrypt.genSalt()),
             email: email
         });
 
@@ -110,4 +107,4 @@ export function login(username, password) {
 
         fulfill(user);
     });
-};
+}

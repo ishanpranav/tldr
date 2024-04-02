@@ -2,11 +2,11 @@
 // Copyright (c) 2024 Ishan Pranav
 // Licensed under the MIT license.
 
-import './config.mjs';
-import './db.mjs';
+import './config.mjs'; // first
+import './db.mjs'; // second
+
 import mongoose from 'mongoose';
 import sanitize from 'mongo-sanitize';
-
 import express from 'express';
 import session from 'express-session';
 import path from 'path';
@@ -91,6 +91,18 @@ app.post('/article/add', async (request, response) => {
     }
 });
 
+app.get('/article/:name', async (request, response) => {
+    const article = await Article
+        .findOne({
+            slug: request.params.name
+        })
+        .populate('user');
+
+    response.render('article-detail', {
+        article: article
+    });
+});
+
 // TODO: respond to GET requests for a specific articl
 // * path is /article/name-of-article-as-slug
 //   * where name-of-article-as-slug will vary
@@ -138,7 +150,7 @@ app.post('/login', async (request, response) => {
         await auth.startAuthenticatedSession(request, user);
         response.redirect('/');
     } catch (err) {
-        console.log(err)
+        console.log(err);
         response.render('login', {
             message: loginMessages[err.message] ?? 'Login unsuccessful'
         });
