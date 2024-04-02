@@ -7,29 +7,47 @@ import mongoose from 'mongoose';
 
 const User = mongoose.model('User');
 
-const startAuthenticatedSession = (req, user) => {
+/**
+ * 
+ * @param {*} request 
+ * @param {*} user 
+ * @returns 
+ */
+export function startAuthenticatedSession(request, user) {
     return new Promise((fulfill, reject) => {
-        req.session.regenerate((err) => {
+        request.session.regenerate((err) => {
             if (err) {
                 reject(err);
                 
                 return;
             }
 
-            req.session.user = user;
+            request.session.user = user;
 
             fulfill(user);
         });
     });
 };
 
-const endAuthenticatedSession = req => {
+/**
+ * 
+ * @param {*} request 
+ * @returns 
+ */
+export function endAuthenticatedSession(request) {
     return new Promise((fulfill, reject) => {
-        req.session.destroy(err => err ? reject(err) : fulfill(null));
+        request.session.destroy(err => err ? reject(err) : fulfill(null));
     });
 };
 
-const register = (username, email, password) => {
+/**
+ * 
+ * @param {*} username 
+ * @param {*} email 
+ * @param {*} password 
+ * @returns 
+ */
+export function register(username, email, password) {
     return new Promise(async (fulfill, reject) => {
         if (username.length <= 8 || password.length <= 8) {
             reject({
@@ -62,26 +80,34 @@ const register = (username, email, password) => {
     });
 }
 
-const login = (username, password) => {
+/**
+ * 
+ * @param {*} username 
+ * @param {*} password 
+ * @returns 
+ */
+export function login(username, password) {
     return new Promise(async (fulfill, reject) => {
+        const user = await User.findOne({
+            username: username
+        });
 
-        // TODO: implement login
-        // * find a user with a matching username
-        // * if username isn't found, reject with { message: "USER NOT FOUND" }
-        // * use bcrypt's sync functions to check if passwords match
-        // * https://www.npmjs.com/package/bcryptjs#usage---sync
-        // * if passwords mismatch, reject w/ { message: "PASSWORDS DO NOT MATCH" }
-        // * however, if passwords match, fulfill with found user
+        if (!user) {
+            reject({
+                message: 'USER NOT FOUND'
+            });
 
+            return;
+        }
 
-        // end TODO
+        if (!await bcrypt.compare(password, user.password)) {
+            reject({
+                message: 'PASSWORDS DO NOT MATCH'
+            });
 
+            return;
+        }
+
+        fulfill(user);
     });
-};
-
-export {
-    startAuthenticatedSession,
-    endAuthenticatedSession,
-    register,
-    login
 };
