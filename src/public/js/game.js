@@ -10,13 +10,19 @@ function onDOMContentLoaded() {
     document
         .querySelector('#playButton') // sic
         .addEventListener('click', onPlayButtonClick);
+    document
+        .getElementById('hitButton')
+        .addEventListener('click', onHitButtonClick);
+    document
+        .getElementById('standButton')
+        .addEventListener('click', onStandButtonClick);
 }
 
 function onPlayButtonClick(e) {
+    e.preventDefault();
     document
         .getElementById('startPanel')
         .classList.add('blackjack-visibility-hidden');
-    e.preventDefault();
 
     const startValues = document.getElementById('startValuesTextBox').value;
     let trickCards;
@@ -28,6 +34,14 @@ function onPlayButtonClick(e) {
     }
 
     createGame(trickCards);
+}
+
+function onHitButtonClick() {
+
+}
+
+function onStandButtonClick() {
+
 }
 
 function getTrickCards(startValues) {
@@ -42,6 +56,37 @@ function getTrickCards(startValues) {
     }
 
     return results;
+}
+
+function getHandTotal(hand) {
+    let result = 0;
+    let containsAce = false;
+
+    for (const card of hand) {
+        switch (card.rank) {
+            case 'A':
+                containsAce = true;
+                result++;
+                break;
+                
+            case 'K':
+            case 'Q':
+            case 'J':
+            case '10':
+                result += 10;
+                break;
+
+            default:
+                result += parseInt(card.rank);
+                break;
+        }
+    }
+
+    if (containsAce && result + 10 <= 21) {
+        result += 10;
+    }
+
+    return result;
 }
 
 function createGame(trickCards) {
@@ -68,6 +113,7 @@ function createGame(trickCards) {
     playerHand.push(deck.pop());
     computerHand.push(deck.pop());
     playerHand.push(deck.pop());
-    console.log(computerHand);
-    console.log(playerHand);
+    document
+        .getElementById('gamePanel').classList
+        .add('blackjack-visibility-visible');
 }
