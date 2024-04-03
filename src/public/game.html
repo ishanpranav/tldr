@@ -17,24 +17,27 @@
     />
   </head>
   <body>
-    <div id="startPanel">
+    <div id="startPanel" class="blackjack-visibility-hidden">
       <form method="post">
         <label for="startValuesTextBox">Start Values:</label>
         <input id="startValuesTextBox" type="text" name="startValues" />
         <input id="playButton" type="submit" value="Play" />
       </form>
     </div>
-    <div id="gamePanel" class="blackjack-visibility-hidden">
-        <div id="computerHandPanel">
-            Computer hand: 
-            <div id="computerHandTotalPanel"></div>
-        </div>
-        <div id="playerHandPanel">
-            Player hand: 
-            <div id="playerHandTotalPanel"></div>
-        </div>
-        <button id="hitButton" type="button">Hit</button>
-        <button id="standButton" type="button">Stand</button>
+    <div id="gamePanel">
+      <div>
+        Computer hand:
+        <div id="computerHandCardsPanel"></div>
+        <div id="computerHandTotalPanel"></div>
+      </div>
+      <div>
+        Player hand:
+        <div id="playerHandCardsPanel"></div>
+        <div id="playerHandTotalPanel"></div>
+      </div>
+      <button id="hitButton" type="button">Hit</button>
+      <button id="standButton" type="button">Stand</button>
+      <button id="nextButton" type="button" disabled="disabled">Next</button>
     </div>
     <script type="module" src="js/game.js" defer="defer"></script>
   </body>
