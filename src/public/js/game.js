@@ -25,15 +25,7 @@ function onPlayButtonClick(e) {
         .classList.add('blackjack-visibility-hidden');
 
     const startValues = document.getElementById('startValuesTextBox').value;
-    let trickCards;
-
-    if (startValues) {
-        trickCards = getTrickCards(startValues);
-    } else {
-        trickCards = [];
-    }
-
-    createGame(trickCards);
+    const state = createGame(getStartRanks(startValues));
 }
 
 function onHitButtonClick() {
@@ -44,15 +36,16 @@ function onStandButtonClick() {
 
 }
 
-function getTrickCards(startValues) {
+function getStartRanks(startValues) {
+    if (!startValues) {
+        return [];
+    }
+
     const segments = startValues.split(",");
     const results = [];
 
     for (const segment of segments) {
-        results.push({
-            rank: segment.trim(),
-            suit: 'S'
-        });
+        results.push(segment.trim());
     }
 
     return results;
@@ -68,7 +61,7 @@ function getHandTotal(hand) {
                 containsAce = true;
                 result++;
                 break;
-                
+
             case 'K':
             case 'Q':
             case 'J':
@@ -89,31 +82,65 @@ function getHandTotal(hand) {
     return result;
 }
 
-function createGame(trickCards) {
-    const deck = [];
-    const computerHand = [];
-    const playerHand = [];
+function createGame(startRanks) {
+    const state = {
+        deck: [],
+        computerHand: {
+            cards: [],
+            panel: document.getElementById('computerHandPanel')
+        },
+        playerHand: {
+            cards: [],
+            panel: document.getElementById('playerHandPanel')
+        }
+    };
     const ranks = [
         'A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2'
     ];
 
     for (const suit of ['S', 'D', 'C', 'H']) {
         for (const rank of ranks) {
-            deck.push({
+            state.deck.push({
                 rank: rank,
                 suit: suit
             });
         }
     }
 
-    fisherYatesShuffle(deck);
-    trickCards.reverse();
-    deck.push(...trickCards);
-    computerHand.push(deck.pop());
-    playerHand.push(deck.pop());
-    computerHand.push(deck.pop());
-    playerHand.push(deck.pop());
+    fisherYatesShuffle(state.deck);
+
+    // NOTE: O(mn) algorithm is quite efficient since m, n are small
+
+    for (let i = 0; i < startRanks.length; i++) {
+        for (let j = i; j < state.deck.length; j++) {
+            if (startRanks[i] === state.deck[j].rank) {
+                [state.deck[i], state.deck[j]] = [state.deck[j], state.deck[i]];
+
+                break;
+            }
+        }
+    }
+
+    state.deck.reverse();
+
+    for (let i = 0; i < 2; i++) {
+        dealCard(state.deck, state.computerHand);
+        dealCard(state.deck, state.playerHand);
+    }
+
     document
         .getElementById('gamePanel').classList
         .add('blackjack-visibility-visible');
+
+    return state;
+}
+
+function dealCard(deck, hand) {
+    const dealt = deck.pop();
+
+    hand.cards.push(dealt);
+
+    const text = document.createTextNode(dealt.rank + dealt.suit + " ");
+
+    hand.panel.appendChild(text);
 }
