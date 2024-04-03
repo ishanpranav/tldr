@@ -144,4 +144,5 @@ app.post('/login', async (request, response) => {
     }
 });
 
+console.log("Listening on port ", process.env.PORT);
 app.listen(process.env.PORT ?? 3000);

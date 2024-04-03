@@ -4,18 +4,24 @@
 
 import { fisherYatesShuffle } from './fisher-yates-shuffle.mjs';
 
+let state;
+
 document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
+
+function getHitButton() {
+    return document.getElementById('hitButton');
+}
+
+function getStandButton() {
+    return document.getElementById('standButton');
+}
 
 function onDOMContentLoaded() {
     document
         .querySelector('#playButton') // sic
         .addEventListener('click', onPlayButtonClick);
-    document
-        .getElementById('hitButton')
-        .addEventListener('click', onHitButtonClick);
-    document
-        .getElementById('standButton')
-        .addEventListener('click', onStandButtonClick);
+    getHitButton().addEventListener('click', onHitButtonClick);
+    getStandButton().addEventListener('click', onStandButtonClick);
 }
 
 function onPlayButtonClick(e) {
@@ -25,11 +31,18 @@ function onPlayButtonClick(e) {
         .classList.add('blackjack-visibility-hidden');
 
     const startValues = document.getElementById('startValuesTextBox').value;
-    const state = createGame(getStartRanks(startValues));
+    
+    state = createGame(getStartRanks(startValues));
 }
 
 function onHitButtonClick() {
+    const handTotal = dealCard(state.deck, state.playerHand);
 
+    if (handTotal > 21) {
+        endGame();
+    
+        return;
+    }
 }
 
 function onStandButtonClick() {
@@ -55,7 +68,7 @@ function getHandTotal(hand) {
     let result = 0;
     let containsAce = false;
 
-    for (const card of hand) {
+    for (const card of hand.cards) {
         switch (card.rank) {
             case 'A':
                 containsAce = true;
@@ -87,11 +100,13 @@ function createGame(startRanks) {
         deck: [],
         computerHand: {
             cards: [],
-            panel: document.getElementById('computerHandPanel')
+            panel: document.getElementById('computerHandPanel'),
+            totalPanel: document.getElementById('computerHandTotalPanel')
         },
         playerHand: {
             cards: [],
-            panel: document.getElementById('playerHandPanel')
+            panel: document.getElementById('playerHandPanel'),
+            totalPanel: document.getElementById('playerHandTotalPanel')
         }
     };
     const ranks = [
@@ -135,6 +150,11 @@ function createGame(startRanks) {
     return state;
 }
 
+function endGame() {
+    getHitButton().disabled = true;
+    getStandButton().disabled = true;
+}
+
 function dealCard(deck, hand) {
     const dealt = deck.pop();
 
@@ -143,4 +163,10 @@ function dealCard(deck, hand) {
     const text = document.createTextNode(dealt.rank + dealt.suit + " ");
 
     hand.panel.appendChild(text);
+
+    const handTotal = getHandTotal(hand);
+
+    hand.totalPanel.innerText = handTotal.toString();
+
+    return handTotal;
 }
