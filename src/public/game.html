@@ -19,12 +19,15 @@
   <body>
     <div id="startPanel">
       <form method="post">
-        <label for="startValues">Start Values:</label>
-        <input type="text" name="startValues" id="startValues" />
+        <label for="startValuesTextBox">Start Values:</label>
+        <input id="startValuesTextBox" type="text" name="startValues" />
         <input id="playButton" type="submit" value="Play" />
       </form>
     </div>
-    <div class="game"></div>
+    <div id="gamePanel" class="blackjack-visibility-hidden">
+        <button id="hitButton" type="button">Hit</button>
+        <button id="standButton" type="button">Stand</button>
+    </div>
     <script type="module" src="js/game.js" defer="defer"></script>
   </body>
 </html>
