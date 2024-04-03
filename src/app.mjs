@@ -40,20 +40,20 @@ const registrationMessages = {
     'USERNAME PASSWORD TOO SHORT': "Username or password is too short"
 };
 
-app.use((req, res, next) => {
-    if (!authRequiredPaths.includes(req.path)) {
+app.use((request, response, next) => {
+    if (!authRequiredPaths.includes(request.path)) {
         next();
 
         return;
     }
 
-    if (req.session.user) {
+    if (request.session.user) {
         next();
 
         return;
     }
 
-    res.redirect('/login');
+    response.redirect('/login');
 });
 
 app.use((request, response, next) => {

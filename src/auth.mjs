@@ -59,7 +59,7 @@ export async function register(username, email, password) {
         };
     }
 
-    let user = await new User({
+    const user = await new User({
         username: username,
         password: await bcrypt.hash(password, await bcrypt.genSalt()),
         email: email

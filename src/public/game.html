@@ -1,3 +1,5 @@
+<!-- game.html -->
+<!-- Copyright (c) 2024 Ishan Pranav -->
 <!-- Licensed under the MIT license. -->
 
 <!DOCTYPE html>
@@ -11,16 +13,18 @@
       href="css/game.css"
       type="text/css"
       media="screen"
-      charset="utf-8" />
+      charset="utf-8"
+    />
   </head>
   <body>
-    <div class="start">
-      <form method="POST" action="">
+    <div id="startPanel">
+      <form method="post">
         <label for="startValues">Start Values:</label>
         <input type="text" name="startValues" id="startValues" />
-        <input class="playBtn" type="submit" value="Play" />
+        <input id="playButton" type="submit" value="Play" />
       </form>
     </div>
     <div class="game"></div>
+    <script type="module" src="js/game.js" defer="defer"></script>
   </body>
 </html>
