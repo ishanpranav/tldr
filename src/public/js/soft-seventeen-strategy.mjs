@@ -1,3 +1,7 @@
+// soft-seventeen-strategy.mjs
+// Copyright (c) 2024 Ishan Pranav
+// Licensed under the MIT license.
+
 import { Strategy } from './strategy.mjs';
 
 export class SoftSeventeenStrategy extends Strategy {

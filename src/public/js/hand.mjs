@@ -1,3 +1,7 @@
+// hand.mjs
+// Copyright (c) 2024 Ishan Pranav
+// Licensed under the MIT license.
+
 export class Hand {
     constructor(onCardAdded) {
         this.cards = [];

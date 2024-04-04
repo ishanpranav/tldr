@@ -106,28 +106,37 @@ function parseStartRanks(startValues) {
 }
 
 function onPlayerHandCardAdded(hand, card) {
-    const text = document.createTextNode(card.rank + card.suit + " ");
-
-    playerHandCardsPanel.appendChild(text);
+    appendCardImage(playerHandCardsPanel, getImageSource(card));
 
     playerHandTotalPanel.innerText = hand.getTotal().toString();
 }
 
 function onComputerHandCardAdded(hand, card) {
     if (hand.cards.length === 1) {
-        hiddenCard = document.createElement('span');
-        hiddenCard.innerText = "?? ";
-
-        computerHandCardsPanel.appendChild(hiddenCard);
-
+        hiddenCard = appendCardImage(
+            computerHandCardsPanel, 
+            'images/RED_BACK.svg');
         computerHandTotalPanel.innerText = "?";
 
         return;
     }
 
-    const text = document.createTextNode(card.rank + card.suit + " ");
+    appendCardImage(computerHandCardsPanel, getImageSource(card));
+}
 
-    computerHandCardsPanel.appendChild(text);
+function getImageSource(card) {
+    return 'images/' + card.rank + card.suit + '.svg';
+}
+
+function appendCardImage(parent, imageSource) {
+    const image = document.createElement('img');
+
+    image.src = imageSource;
+
+    image.classList.add('blackjack-card');
+    parent.appendChild(image);
+
+    return image;
 }
 
 function onHitButtonClick() {
@@ -163,9 +172,6 @@ function onGameOver(victor) {
         victorPanel.innerText = "It's a draw!";
     }
 
-    hiddenCard.innerText = 
-        state.computerHand.cards[0].rank + 
-        state.computerHand.cards[0].suit + 
-        " ";
+    hiddenCard.src = getImageSource(state.computerHand.cards[0]);
     computerHandTotalPanel.innerText = state.computerHand.getTotal();
 }

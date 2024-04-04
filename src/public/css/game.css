@@ -5,3 +5,8 @@
 .blackjack-visibility-hidden {
     visibility: hidden;
 }
+
+.blackjack-card {
+    padding: 8px;
+    width: 128px;
+}

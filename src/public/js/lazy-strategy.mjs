@@ -1,3 +1,7 @@
+// lazy-strategy.mjs
+// Copyright (c) 2024 Ishan Pranav
+// Licensed under the MIT license.
+
 import { Strategy } from './strategy.mjs';
 
 export class LazyStrategy extends Strategy {
