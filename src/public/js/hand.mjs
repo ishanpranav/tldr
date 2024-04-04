@@ -4,35 +4,44 @@ export class Hand {
         this.onCardAdded = onCardAdded;
     }
 
-    getTotal() {
-        let result = 0;
+    qualify() {
+        let total = 0;
+        let isSoft = false;
         let containsAce = false;
 
         for (const card of this.cards) {
             switch (card.rank) {
                 case 'A':
                     containsAce = true;
-                    result++;
+                    total++;
                     break;
 
                 case 'K':
                 case 'Q':
                 case 'J':
                 case '10':
-                    result += 10;
+                    total += 10;
                     break;
 
                 default:
-                    result += parseInt(card.rank);
+                    total += parseInt(card.rank);
                     break;
             }
         }
 
-        if (containsAce && result + 10 <= 21) {
-            result += 10;
+        if (containsAce && total + 10 <= 21) {
+            total += 10;
+            isSoft = true;
         }
 
-        return result;
+        return {
+            total: total,
+            isSoft: isSoft
+        };
+    }
+
+    getTotal() {
+        return this.qualify().total;
     }
 
     addCard(card) {

@@ -41,7 +41,11 @@ export class GameState {
     }
 
     dealOne(hand) {
-        hand.addCard(this.deck.pop());
+        const result = this.deck.pop();
+
+        hand.addCard(result);
+
+        return result;
     }
 
     standoff() {

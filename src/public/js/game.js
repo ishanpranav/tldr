@@ -5,8 +5,10 @@
 import { GameState } from './game-state.mjs';
 import { Hand } from './hand.mjs';
 
-import { LazyStrategy } from './lazy-strategy.mjs';
-// import { RandomStrategy } from './lazy-strategy.mjs';
+// import { LazyStrategy } from './lazy-strategy.mjs';
+// import { RandomStrategy } from './random-strategy.mjs';
+
+import { SoftSeventeenStrategy } from './soft-seventeen-strategy.mjs';
 
 document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
 
@@ -21,7 +23,7 @@ let computerHandTotalPanel;
 let hiddenCard;
 let victorPanel;
 const debug = false;
-const strategy = new LazyStrategy();
+const strategy = new SoftSeventeenStrategy();
 
 function onDOMContentLoaded() {
     document
@@ -161,6 +163,9 @@ function onGameOver(victor) {
         victorPanel.innerText = "It's a draw!";
     }
 
-    hiddenCard.innerText = state.computerHand.cards[0].rank + state.computerHand.cards[0].suit + " ";
+    hiddenCard.innerText = 
+        state.computerHand.cards[0].rank + 
+        state.computerHand.cards[0].suit + 
+        " ";
     computerHandTotalPanel.innerText = state.computerHand.getTotal();
 }
