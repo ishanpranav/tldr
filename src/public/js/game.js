@@ -20,7 +20,7 @@ let playerHandCardsPanel;
 let playerHandTotalPanel;
 let computerHandCardsPanel;
 let computerHandTotalPanel;
-let hiddenCard;
+let hiddenCardImage;
 let victorPanel;
 const debug = false;
 const strategy = new SoftSeventeenStrategy();
@@ -69,9 +69,9 @@ function startGame() {
         "MIT license. The logo for this project was designed by ");
     appendAnchor(
         paragraph,
-        'https://www.flaticon.com/free-icons/cards',
-        "Freepick on Flaticon");
-    appendText(paragraph, ". Layouts and styles are provided by ");
+        'https://www.flaticon.com/authors/darius-dan',
+        "Darius Dan on Flaticon");
+    appendText(paragraph, ". Layouts and styles were provided by ");
     appendAnchor(paragraph, 'https://getbootstrap.com', "Bootstrap");
     appendText(paragraph, ". Playing card graphics were designed by Chris " +
         "Aguilar as part of the Vectorized Playing Cards project and " +
@@ -80,8 +80,8 @@ function startGame() {
         paragraph,
         'https://github.com/richardschneider/cardsJS',
         "CardsJS");
-    appendText(paragraph, ", both licensed under the GNU Lesser General " +
-        "Public License v3.0.");
+    appendText(paragraph, " project, both licensed under the GNU Lesser " +
+        "General Public License v3.0.");
     paragraph.classList.add('text-center');
     paragraph.classList.add('text-body-secondary');
     header.appendChild(span);
@@ -130,14 +130,14 @@ function parseStartRanks(startValues) {
 }
 
 function onPlayerHandCardAdded(hand, card) {
-    appendCardImage(playerHandCardsPanel, getImageSource(card));
+    appendImage(playerHandCardsPanel, getImageSource(card));
 
     playerHandTotalPanel.textContent = "Player: " + hand.getTotal();
 }
 
 function onComputerHandCardAdded(hand, card) {
     if (hand.cards.length === 1) {
-        hiddenCard = appendCardImage(
+        hiddenCardImage = appendImage(
             computerHandCardsPanel,
             'images/RED_BACK.svg');
         computerHandTotalPanel.textContent = "Dealer: ?";
@@ -145,22 +145,11 @@ function onComputerHandCardAdded(hand, card) {
         return;
     }
 
-    appendCardImage(computerHandCardsPanel, getImageSource(card));
+    appendImage(computerHandCardsPanel, getImageSource(card));
 }
 
 function getImageSource(card) {
     return 'images/' + card.rank + card.suit + '.svg';
-}
-
-function appendCardImage(parent, imageSource) {
-    const image = document.createElement('img');
-
-    image.src = imageSource;
-
-    image.classList.add('blackjack-card');
-    parent.appendChild(image);
-
-    return image;
 }
 
 function appendAnchor(parent, hyperlinkReference, textContent) {
@@ -170,6 +159,7 @@ function appendAnchor(parent, hyperlinkReference, textContent) {
     anchor.target = '_blank';
     anchor.textContent = textContent;
 
+    anchor.classList.add('text-decoration-none');
     parent.appendChild(anchor);
 
     return anchor;
@@ -189,6 +179,17 @@ function appendButton(parent, textContent, clickEventHandler) {
     parent.appendChild(button);
 
     return button;
+}
+
+function appendImage(parent, imageSource) {
+    const image = document.createElement('img');
+
+    image.src = imageSource;
+
+    image.classList.add('blackjack-card');
+    parent.appendChild(image);
+
+    return image;
 }
 
 function appendText(parent, textContent) {
@@ -228,7 +229,7 @@ function onGameOver(victor) {
         victorPanel.textContent = "It's a draw!";
     }
 
-    hiddenCard.src = getImageSource(state.computerHand.cards[0]);
+    hiddenCardImage.src = getImageSource(state.computerHand.cards[0]);
     computerHandTotalPanel.textContent = "Dealer: " +
         state.computerHand.getTotal();
 }
