@@ -51,7 +51,7 @@ export class GameState {
         if (computerTotal > playerTotal) {
             this.onGameOver(this.computerHand);
         } else if (computerTotal < playerTotal) {
-            this.onGameOver(this.computerHand);
+            this.onGameOver(this.playerHand);
         } else {
             this.onGameOver(null);
         }

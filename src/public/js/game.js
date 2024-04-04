@@ -18,6 +18,7 @@ let playerHandCardsPanel;
 let playerHandTotalPanel;
 let computerHandCardsPanel;
 let computerHandTotalPanel;
+let hiddenCard;
 let victorPanel;
 const debug = false;
 const strategy = new LazyStrategy();
@@ -71,10 +72,10 @@ function startGame() {
     hitButton.addEventListener('click', onHitButtonClick);
     standButton.addEventListener('click', onStandButtonClick);
     nextButton.addEventListener('click', onNextButtonClick);
-    gamePanel.appendChild(playerHandCardsPanel);
-    gamePanel.appendChild(playerHandTotalPanel);
     gamePanel.appendChild(computerHandCardsPanel);
     gamePanel.appendChild(computerHandTotalPanel);
+    gamePanel.appendChild(playerHandCardsPanel);
+    gamePanel.appendChild(playerHandTotalPanel);
     gamePanel.appendChild(hitButton);
     gamePanel.appendChild(standButton);
     gamePanel.appendChild(nextButton);
@@ -103,25 +104,35 @@ function parseStartRanks(startValues) {
 }
 
 function onPlayerHandCardAdded(hand, card) {
-    onHandCardAdded(hand, card, playerHandCardsPanel, playerHandTotalPanel);
+    const text = document.createTextNode(card.rank + card.suit + " ");
+
+    playerHandCardsPanel.appendChild(text);
+
+    playerHandTotalPanel.innerText = hand.getTotal().toString();
 }
 
 function onComputerHandCardAdded(hand, card) {
-    onHandCardAdded(hand, card, computerHandCardsPanel, computerHandTotalPanel);
-}
+    if (hand.cards.length === 1) {
+        hiddenCard = document.createElement('span');
+        hiddenCard.innerText = "?? ";
 
-function onHandCardAdded(hand, card, cardsPanel, totalPanel) {
+        computerHandCardsPanel.appendChild(hiddenCard);
+
+        computerHandTotalPanel.innerText = "?";
+
+        return;
+    }
+
     const text = document.createTextNode(card.rank + card.suit + " ");
 
-    cardsPanel.appendChild(text);
-    totalPanel.innerText = hand.getTotal().toString();
+    computerHandCardsPanel.appendChild(text);
 }
 
 function onHitButtonClick() {
     state.dealOne(state.playerHand);
 
     if (state.playerHand.isBust()) {
-        onGameOver(state.computerHand);
+        state.onGameOver(state.computerHand);
     }
 }
 
@@ -149,4 +160,6 @@ function onGameOver(victor) {
     } else {
         victorPanel.innerText = "It's a draw!";
     }
+
+    hiddenCard.innerText = state.computerHand.cards[0].rank + state.computerHand.cards[0].suit + " ";
 }
