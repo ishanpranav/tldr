@@ -4,7 +4,9 @@
 
 import { GameState } from './game-state.mjs';
 import { Hand } from './hand.mjs';
+
 import { LazyStrategy } from './lazy-strategy.mjs';
+// import { RandomStrategy } from './lazy-strategy.mjs';
 
 document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
 
@@ -49,6 +51,9 @@ function startGame() {
         hideElement(getStartPanel());
     }
 
+    const gamePanel = document.querySelector('.game');
+
+    gamePanel.innerHTML = "";
     hitButton = document.createElement('button');
     standButton = document.createElement('button');
     nextButton = document.createElement('button');
@@ -66,9 +71,6 @@ function startGame() {
     hitButton.addEventListener('click', onHitButtonClick);
     standButton.addEventListener('click', onStandButtonClick);
     nextButton.addEventListener('click', onNextButtonClick);
-
-    const gamePanel = document.querySelector('.game');
-
     gamePanel.appendChild(playerHandCardsPanel);
     gamePanel.appendChild(playerHandTotalPanel);
     gamePanel.appendChild(computerHandCardsPanel);
@@ -132,7 +134,7 @@ function onStandButtonClick() {
 }
 
 function onNextButtonClick() {
-    window.location.reload();
+    startGame();
 }
 
 function onGameOver(victor) {
