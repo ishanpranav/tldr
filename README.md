@@ -14,4 +14,5 @@ site: kind of like a terrible version of another site whose name rhymes with
 ## Blackjack
 
 This is an implementation of Blackjack for the NYU CSCI 467 Applied Internet
-Technology course.
+Technology course. This applications is meant to demonstrate extensive use of
+the JavaScript HTML DOM API.

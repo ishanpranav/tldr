@@ -4,6 +4,10 @@
 
 import { Strategy } from './strategy.mjs';
 
+/**
+ * Provides a lazy implementation of the `Strategy` class which always hits
+ * once, then stands.
+ */
 export class LazyStrategy extends Strategy {
     play(state) {
         state.dealOne(state.computerHand);
