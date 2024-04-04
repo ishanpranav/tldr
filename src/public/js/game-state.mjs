@@ -2,10 +2,11 @@ import { Card } from './card.mjs';
 import { fisherYatesShuffle } from './fisher-yates-shuffle.mjs';
 
 export class GameState {
-    constructor(startRanks, playerHand, computerHand) {
+    constructor(startRanks, playerHand, computerHand, onGameOver) {
         this.deck = [];
         this.playerHand = playerHand;
         this.computerHand = computerHand;
+        this.onGameOver = onGameOver;
 
         const ranks = [
             'A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2'
@@ -41,5 +42,18 @@ export class GameState {
 
     dealOne(hand) {
         hand.addCard(this.deck.pop());
+    }
+
+    standoff() {
+        const computerTotal = this.computerHand.getTotal();
+        const playerTotal = this.playerHand.getTotal();
+
+        if (computerTotal > playerTotal) {
+            this.onGameOver(this.computerHand);
+        } else if (computerTotal < playerTotal) {
+            this.onGameOver(this.computerHand);
+        } else {
+            this.onGameOver(null);
+        }
     }
 }

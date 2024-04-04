@@ -1,44 +1,26 @@
-<!-- game.html -->
-<!-- Copyright (c) 2024 Ishan Pranav -->
-<!-- Licensed under the MIT license. -->
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cards!</title>
     <link
       rel="stylesheet"
       href="css/game.css"
       type="text/css"
       media="screen"
+      title="no title"
       charset="utf-8"
     />
+    <meta charset="utf-8" />
   </head>
   <body>
-    <div id="startPanel" class="blackjack-visibility-hidden">
-      <form method="post">
-        <label for="startValuesTextBox">Start Values:</label>
-        <input id="startValuesTextBox" type="text" name="startValues" />
-        <input id="playButton" type="submit" value="Play" />
+    <script type="module" src="js/game.js" defer="defer"></script>
+    <div class="start">
+      <form method="POST" action="">
+        <label for="startValues">Start Values:</label>
+        <input type="text" name="startValues" id="startValues" />
+        <input class="playBtn" type="submit" value="Play" />
       </form>
     </div>
-    <div id="gamePanel">
-      <div>
-        Computer hand:
-        <div id="computerHandCardsPanel"></div>
-        <div id="computerHandTotalPanel"></div>
-      </div>
-      <div>
-        Player hand:
-        <div id="playerHandCardsPanel"></div>
-        <div id="playerHandTotalPanel"></div>
-      </div>
-      <button id="hitButton" type="button">Hit</button>
-      <button id="standButton" type="button">Stand</button>
-      <button id="nextButton" type="button" disabled="disabled">Next</button>
-    </div>
-    <script type="module" src="js/game.js" defer="defer"></script>
+    <div class="game"></div>
   </body>
 </html>

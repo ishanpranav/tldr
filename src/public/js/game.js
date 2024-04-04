@@ -4,52 +4,35 @@
 
 import { GameState } from './game-state.mjs';
 import { Hand } from './hand.mjs';
-import { RandomStrategy } from './random-strategy.js';
+import { LazyStrategy } from './lazy-strategy.mjs';
 
 document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
 
 let state;
-const debug = true;
-const strategy = new RandomStrategy();
+let hitButton;
+let standButton;
+let nextButton;
+let playerHandCardsPanel;
+let playerHandTotalPanel;
+let computerHandCardsPanel;
+let computerHandTotalPanel;
+let victorPanel;
+const debug = false;
+const strategy = new LazyStrategy();
 
 function onDOMContentLoaded() {
     document
-        .querySelector('#playButton') // sic
+        .querySelector('.playBtn')
         .addEventListener('click', onPlayButtonClick);
-    getHitButton().addEventListener('click', onHitButtonClick);
-    getStandButton().addEventListener('click', onStandButtonClick);
-    getNextButton().addEventListener('click', onNextButtonClick);
 
-    if (debug) {
-        hideElement(getGamePanel());
-        showElement(getStartPanel());
-    } else {
+    if (!debug) {
+        hideElement(getStartPanel());
         startGame();
     }
 }
 
-function getHitButton() {
-    return document.getElementById('hitButton');
-}
-
-function getStandButton() {
-    return document.getElementById('standButton');
-}
-
-function getNextButton() {
-    return document.getElementById('nextButton');
-}
-
 function getStartPanel() {
-    return document.getElementById('startPanel')
-}
-
-function getGamePanel() {
-    return document.getElementById('gamePanel');
-}
-
-function showElement(element) {
-    element.classList.remove('blackjack-visibility-hidden');
+    return document.querySelector('.start');
 }
 
 function hideElement(element) {
@@ -63,14 +46,43 @@ function onPlayButtonClick(e) {
 
 function startGame() {
     if (debug) {
-        showElement(getGamePanel());
         hideElement(getStartPanel());
     }
 
+    hitButton = document.createElement('button');
+    standButton = document.createElement('button');
+    nextButton = document.createElement('button');
+    playerHandCardsPanel = document.createElement('div');
+    playerHandTotalPanel = document.createElement('div');
+    computerHandCardsPanel = document.createElement('div');
+    computerHandTotalPanel = document.createElement('div');
+    victorPanel = document.createElement('div');
+    hitButton.innerText = "Hit";
+    standButton.innerText = "Stand";
+    nextButton.innerText = "Next";
+    playerHandCardsPanel.innerText = "Player hand: ";
+    computerHandCardsPanel.innerText = "Computer hand: ";
+
+    hitButton.addEventListener('click', onHitButtonClick);
+    standButton.addEventListener('click', onStandButtonClick);
+    nextButton.addEventListener('click', onNextButtonClick);
+
+    const gamePanel = document.querySelector('.game');
+
+    gamePanel.appendChild(playerHandCardsPanel);
+    gamePanel.appendChild(playerHandTotalPanel);
+    gamePanel.appendChild(computerHandCardsPanel);
+    gamePanel.appendChild(computerHandTotalPanel);
+    gamePanel.appendChild(hitButton);
+    gamePanel.appendChild(standButton);
+    gamePanel.appendChild(nextButton);
+    gamePanel.appendChild(victorPanel);
+
     state = new GameState(
-        parseStartRanks(document.getElementById('startValuesTextBox').value),
+        parseStartRanks(document.getElementById('startValues').value),
         new Hand(onPlayerHandCardAdded),
-        new Hand(onComputerHandCardAdded));
+        new Hand(onComputerHandCardAdded),
+        onGameOver);
 }
 
 function parseStartRanks(startValues) {
@@ -89,19 +101,11 @@ function parseStartRanks(startValues) {
 }
 
 function onPlayerHandCardAdded(hand, card) {
-    onHandCardAdded(
-        hand,
-        card,
-        document.getElementById('playerHandCardsPanel'),
-        document.getElementById('playerHandTotalPanel'));
+    onHandCardAdded(hand, card, playerHandCardsPanel, playerHandTotalPanel);
 }
 
 function onComputerHandCardAdded(hand, card) {
-    onHandCardAdded(
-        hand,
-        card,
-        document.getElementById('computerHandCardsPanel'),
-        document.getElementById('computerHandTotalPanel'));
+    onHandCardAdded(hand, card, computerHandCardsPanel, computerHandTotalPanel);
 }
 
 function onHandCardAdded(hand, card, cardsPanel, totalPanel) {
@@ -115,18 +119,32 @@ function onHitButtonClick() {
     state.dealOne(state.playerHand);
 
     if (state.playerHand.isBust()) {
-        getHitButton().disabled = true;
-        getStandButton().disabled = true;
-        getNextButton().disabled = false;
+        onGameOver(state.computerHand);
     }
 }
 
 function onStandButtonClick() {
-    getHitButton().disabled = true;
-    getStandButton().disabled = true;
-    getNextButton().disabled = false;
+    hitButton.disabled = true;
+    standButton.disabled = true;
+    nextButton.disabled = false;
+
+    strategy.play(state);
 }
 
 function onNextButtonClick() {
     window.location.reload();
+}
+
+function onGameOver(victor) {
+    hitButton.disabled = true;
+    standButton.disabled = true;
+    nextButton.disabled = false;
+
+    if (victor === state.playerHand) {
+        victorPanel.innerText = "You won!";
+    } else if (victor === state.computerHand) {
+        victorPanel.innerText = "Computer wins!";
+    } else {
+        victorPanel.innerText = "It's a draw!";
+    }
 }

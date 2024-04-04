@@ -1,7 +1,7 @@
 {
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "lint": "eslint --fix src/*.mjs"
+        "lint": "eslint --fix src/*.mjs src/public/js/*.mjs src/public/js/*.js"
     },
     "dependencies": {
         "bcryptjs": "^2.4.3",
