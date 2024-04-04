@@ -162,4 +162,5 @@ function onGameOver(victor) {
     }
 
     hiddenCard.innerText = state.computerHand.cards[0].rank + state.computerHand.cards[0].suit + " ";
+    computerHandTotalPanel.innerText = state.computerHand.getTotal();
 }
